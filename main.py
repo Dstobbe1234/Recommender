@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import json
+import math
 df = pd.read_csv('tmdb_5000_movies.csv')
 
 #Genres, keywords, overview
@@ -20,18 +21,37 @@ for o in keywordsObjects:
     for keyword in json.loads(o):
         keywords[-1].append(keyword["name"])
 
-print(keywords)
 overview = df['overview'].tolist()
-
+print(genres)
 
 titles = df['title'].tolist()
 words = [genres[i] + keywords[i] for i in range(len(titles))]
 # for i in range(len(titles)):
 #     words.append([])
-    
 totWords = []
 for row in words:
     totWords.extend(row)
+totWords = list(set(totWords))
+
+movie = input("Enter a movie name: ")
+movieIndex = titles.index(movie)
+
+def assignVectors(index):
+    vector = []
+
+    for word in totWords:
+        wordCount = 0
+        for wordArr in words:
+            if word in wordArr:
+                wordCount+=1
+            
+        tf = words[index].count(word)
+        idf = math.log(len(titles) / wordCount)
+        vector.append(tf * idf)
+    return vector
+
+assignVectors(movieIndex)
+
 
 
 
